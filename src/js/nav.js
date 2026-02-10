@@ -46,6 +46,8 @@ document.addEventListener("astro:page-load", () => {
 			return Math.ceil(nav.getBoundingClientRect().height || 0);
 		};
 
+		const getScrollY = () => window.scrollY ?? window.pageYOffset ?? 0;
+
 		const toggleAttribute = (element, attribute, value1 = "true", value2 = "false") => {
 			if (!element) return;
 			const current = element.getAttribute(attribute);
@@ -58,11 +60,15 @@ document.addEventListener("astro:page-load", () => {
 		const scrollSpy = (() => {
 			let observer;
 			let observedSections = [];
+			let rafId;
+			let suppressObserver = false;
 
 			const clearActive = () => {
 				if (!elements.navigation) return;
+				// CONFIG.SELECTORS.scrollSpyLinks already includes `#cs-navigation`, so querying it
+				// from within the navigation element can fail (it looks for a nested #cs-navigation).
 				elements.navigation
-					.querySelectorAll(CONFIG.SELECTORS.scrollSpyLinks)
+					.querySelectorAll("a[data-scrollspy]")
 					.forEach((a) => a.classList.remove(CONFIG.CLASSES.active));
 			};
 
@@ -82,6 +88,46 @@ document.addEventListener("astro:page-load", () => {
 				return id || null;
 			};
 
+			const pickActiveByScrollPosition = () => {
+				if (!observedSections.length) return;
+				const offset = getHeaderOffset() + 8; // small buffer so activation feels natural
+				const y = getScrollY() + offset;
+
+				const last = observedSections[observedSections.length - 1];
+				if (last) {
+					const rect = last.getBoundingClientRect();
+					const lastBottom = rect.bottom + getScrollY();
+					// If we've scrolled past the end of the last tracked section, clear active state.
+					// Use boundingClientRect.bottom to account for layout/transform differences.
+					if (y > lastBottom + 4) {
+						suppressObserver = true;
+						clearActive();
+						return;
+					}
+				}
+
+				// We're within the tracked range again.
+				suppressObserver = false;
+
+				// Choose the last section whose top is above the current scroll position.
+				let current = observedSections[0];
+				for (const section of observedSections) {
+					const top = section.getBoundingClientRect().top + getScrollY();
+					if (top <= y) current = section;
+					else break;
+				}
+
+				if (current?.id) setActiveById(current.id);
+			};
+
+			const schedulePick = () => {
+				if (rafId) return;
+				rafId = window.requestAnimationFrame(() => {
+					rafId = undefined;
+					pickActiveByScrollPosition();
+				});
+			};
+
 			const init = () => {
 				if (!elements.navigation) return;
 
@@ -89,8 +135,12 @@ document.addEventListener("astro:page-load", () => {
 				if (observer) observer.disconnect();
 				observer = undefined;
 				observedSections = [];
+				if (rafId) {
+					window.cancelAnimationFrame(rafId);
+					rafId = undefined;
+				}
 
-				const links = Array.from(elements.navigation.querySelectorAll(CONFIG.SELECTORS.scrollSpyLinks));
+				const links = Array.from(elements.navigation.querySelectorAll("a[data-scrollspy]"));
 				if (!links.length) return;
 
 				const pairs = links
@@ -100,11 +150,16 @@ document.addEventListener("astro:page-load", () => {
 				// Map links to actual sections present on page
 				const sections = pairs
 					.map((p) => document.getElementById(p.id))
-					.filter(Boolean);
+					.filter(Boolean)
+					// keep DOM order (important for scroll math)
+					.sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
 
 				if (!sections.length) return;
 
 				observedSections = sections;
+
+				// Set initial active based on scroll position (works even for the last section)
+				pickActiveByScrollPosition();
 
 				// If URL already has a hash, set active immediately
 				if (location.hash) {
@@ -121,6 +176,7 @@ document.addEventListener("astro:page-load", () => {
 				};
 
 				observer = new IntersectionObserver((entries) => {
+					if (suppressObserver) return;
 					// Pick the most visible intersecting entry
 					const visible = entries
 						.filter((e) => e.isIntersecting)
@@ -146,12 +202,22 @@ document.addEventListener("astro:page-load", () => {
 						{ passive: true }
 					);
 				});
+
+				// Update on scroll as a reliable fallback (esp. the last section)
+				window.removeEventListener("scroll", schedulePick);
+				window.addEventListener("scroll", schedulePick, { passive: true });
 			};
 
 			const destroy = () => {
 				if (observer) observer.disconnect();
 				observer = undefined;
 				observedSections = [];
+				suppressObserver = false;
+				if (rafId) {
+					window.cancelAnimationFrame(rafId);
+					rafId = undefined;
+				}
+				window.removeEventListener("scroll", schedulePick);
 			};
 
 			return { init, destroy };
