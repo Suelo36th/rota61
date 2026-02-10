@@ -53,8 +53,11 @@ import DarkModeToggle from "@components/DarkModeToggle/DarkModeToggle.astro";
 					<li class="cs-li">
 						<a href="#gallery" class="cs-li-link" data-scrollspy>Galeri</a>
 					</li>
+					<li class="cs-li cs-visually-hidden">
+						<a href="#faq" class="cs-li-link" data-scrollspy tabindex="-1" aria-hidden="true">SSS</a>
+					</li>
 					<li class="cs-li cs-hide-on-desktop">
-						<a href="#footer" class="cs-li-link" > İletişim </a>
+						<a href="#footer" class="cs-li-link" data-scrollspy> İletişim </a>
 					</li>
 				</ul>
 			</div>
@@ -670,6 +673,11 @@ import DarkModeToggle from "@components/DarkModeToggle/DarkModeToggle.astro";
 			position: fixed;
 			z-index: 10000;
 
+			.cs-visually-hidden {
+				/* Keep it in the DOM for scrollspy, but invisible and non-interactive */
+				display: none !important;
+			}
+
 			.cs-container {
 				width: 100%;
 				max-width: (1280/16rem);
@@ -795,5 +803,10 @@ import DarkModeToggle from "@components/DarkModeToggle/DarkModeToggle.astro";
 				}
 			}
 		}
+	}
+
+	.cs-visually-hidden {
+		/* Keep it in the DOM for scrollspy, but invisible and non-interactive */
+		display: none !important;
 	}
 </style>
