@@ -3,7 +3,7 @@ export const SITE = {
 	title: "ROTA 61 Trabzon Motosiklet Derneği",
 	tagline: "Iki teker sevdalilari bir araya getiriyor",
 	description: "ROTA 61 Trabzon Motosiklet Derneği, motosiklet tutkunlarını bir araya getiren bir topluluktur. Amacımız, motosiklet kültürünü yaymak, güvenli sürüşü teşvik etmek ve üyelerimiz arasında dayanışmayı güçlendirmektir. Etkinliklerimiz, turlarımız ve sosyal faaliyetlerimizle, motosiklet severlerin keyifli vakit geçirebileceği bir ortam sunuyoruz.",
-	url: "http://www.rota61.com/",
+	url: "https://rota61.com/",
 	author: "Elma&Co.",
 	locale: "tr",
 };

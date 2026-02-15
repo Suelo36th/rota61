@@ -1,5 +1,7 @@
 ---
 import { BOARD_MEMBERS, BOARD_TITLE } from "../../data/clubMembers";
+import placeholderImage from "@assets/images/placeholder.jpg";
+import { Picture } from "astro:assets";
 ---
 
 <section id="members">
@@ -12,14 +14,14 @@ import { BOARD_MEMBERS, BOARD_TITLE } from "../../data/clubMembers";
     <ul class="cs-list" role="list">
       {BOARD_MEMBERS.map((member) => (
         <li class="cs-item">
-          <img
-            class="cs-avatar"
-            src={member.image ?? "/assets/images/placeholder.jpg"}
-            alt={`${member.firstName} ${member.lastName} profile photo`}
-            loading="lazy"
-            decoding="async"
-            width="96"
-            height="96"
+          <Picture
+              src={member.image ?? placeholderImage}
+              alt={`${member.firstName} ${member.lastName} profile photo`}
+              width={96}
+              height={96}
+              formats={['avif', 'webp']}
+              pictureAttributes={{ class: "cs-avatar" }}
+              style="height: 100%; width: 100%; object-fit: cover;"
           />
           <div class="cs-text">
             <h3 class="cs-role">{member.role}</h3>
@@ -94,6 +96,13 @@ import { BOARD_MEMBERS, BOARD_TITLE } from "../../data/clubMembers";
         flex: 0 0 (110/16rem);
         width: (110/16rem);
         height: (110/16rem);
+        object-fit: cover;
+        display: block;
+      }
+
+      .cs-avatar-image {
+        width: 100%;
+        height: 100%;
         object-fit: cover;
         display: block;
       }

@@ -1,46 +1,54 @@
+import mikailBagci from "@assets/images/members/mikailbagci.jpg";
+import armaganAykut from "@assets/images/members/armaganaykut.jpg";
+import aliAltin from "@assets/images/members/alialtin.jpeg";
+import fatihAltin from "@assets/images/members/fatihaltin.jpg";
+import muratDercin from "@assets/images/members/muratdercin.jpg";
+import hakanElmas from "@assets/images/members/hakanelmas.jpg";
+import halilOezkan from "@assets/images/members/haliloezkan.jpg";
+
 export const BOARD_TITLE = "Yönetim Kurulumuz";
 
 export const BOARD_MEMBERS = [
   {
     role: "President",
     firstName: "Mikail",
-    lastName: "BAĞCI",
-    image: "src/assets/images/members/mikailbagci.jpg",
+    lastName: "Bağcı",
+    image: mikailBagci,
   },
   {
     role: "V.PRESIDENT",
     firstName: "Armağan",
-    lastName: "AYKUT",
-    image: "src/assets/images/members/armaganaykut.jpg",
+    lastName: "Aykut",
+    image: armaganAykut,
   },
   {
     role: "V.PRESIDENT",
     firstName: "Ali",
-    lastName: "ALTIN",
-    image: "src/assets/images/members/alialtin.jpeg",
+    lastName: "Altın",
+    image: aliAltin,
   },
   {
     role: "ROAD CAPTAIN",
     firstName: "Fatih",
-    lastName: "ALTIN",
-    image: "src/assets/images/members/fatihaltin.jpg",
+    lastName: "Altın",
+    image: fatihAltin,
   },
   {
     role: "ROAD CAPTAIN",
     firstName: "Murat Burçin",
-    lastName: "DERÇİN",
-    image: "src/assets/images/members/muratdercin.jpg",
+    lastName: "Dercin",
+    image: muratDercin,
   },
   {
     role: "SECRETARY",
     firstName: "Hakan",
     lastName: "Elmas",
-    image: "src/assets/images/members/hakanelmas.jpg",
+    image: hakanElmas,
   },
   {
     role: "TREASURER",
     firstName: "Halil",
-    lastName: "ÖZKAN",
-    image: "src/assets/images/members/haliloezkan.jpg",
+    lastName: "Özkan",
+    image: halilOezkan,
   },
 ] as const;
